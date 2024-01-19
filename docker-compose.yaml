@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  node:
+      image: boilerplate-bff
+      container_name: boilerplate_bff
+      restart: on-failure
+      build:
+        context: .
+        dockerfile: Dockerfile
+        target: app-builder
+      environment:
+        - ./.env
+      volumes:
+        - ./:/app
+      ports:
+        - 3000:3000
+      depends_on:
+        - mysql
+      links:
+        - mysql
+      networks:
+        - network
+      command: sh -c "yarn start"
+  mysql:
+    image: mysql:5.7
+    container_name: boilerplate_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+
+      MYSQL_USER: "boilerplate_bff"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_PASSWORD: "root"
+
+      MYSQL_DATABASE: "boilerplate_bff"
+    ports:
+      - "3306:3306"
+    networks:
+      - network
+  redis:
+    image: redis
+    container_name: boilerplate_redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    networks:
+      - network
+networks:
+  network:
+    driver: bridge

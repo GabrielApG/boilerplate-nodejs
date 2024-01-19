@@ -1,0 +1,29 @@
+FROM node:alpine AS app-builder
+
+RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache bash
+
+WORKDIR /build
+
+COPY . .
+
+RUN yarn install
+# RUN yarn install --frozen-lockfile
+
+#RUN npm install --production
+
+FROM node:alpine AS app-runner
+
+RUN apk add --no-cache bash
+RUN yarn global add pm2
+
+COPY --from=app-builder /build/server /server
+
+WORKDIR /app
+
+COPY --from=app-builder /build/src ./src
+COPY --from=app-builder /build/node_modules ./node_modules
+
+EXPOSE 3000
+
+CMD ["pm2-runtime", "/app/src/index.js"]

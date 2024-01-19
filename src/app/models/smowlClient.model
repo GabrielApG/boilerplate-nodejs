@@ -1,0 +1,26 @@
+const { Model, DataTypes } = require("sequelize");
+
+class SmowlClient extends Model {
+  static init(sequelize) {
+    super.init(
+      {
+        canvas_url_api: DataTypes.STRING,
+        canvas_client_id: DataTypes.STRING,
+        canvas_secret_id: DataTypes.STRING,
+        clientname: DataTypes.STRING,
+        password: DataTypes.STRING,
+        ip_created_at: DataTypes.STRING,
+        ip_updated_at: DataTypes.STRING,
+      },
+      {
+        sequelize,
+        tableName: "smowl_client",
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+        deletedAt: "deleted_at",
+      }
+    );
+  }
+}
+
+module.exports = SmowlClient;
